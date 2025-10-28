@@ -9,30 +9,28 @@ from ..models.resource import Resource
 
 
 async def upsert_resource_fts(session: AsyncSession, resource: Resource) -> None:
-    await session.execute(text("DELETE FROM resources_fts WHERE rowid = :id"), {"id": resource.id})
-    await session.execute(
+    await session.exec(text("DELETE FROM resources_fts WHERE rowid = :id").bindparams(id=resource.id))
+    await session.exec(
         text(
             """
             INSERT INTO resources_fts(rowid, name, description, tags)
             VALUES (:id, :name, :description, :tags)
             """
-        ),
-        {
-            "id": resource.id,
-            "name": resource.name,
-            "description": resource.description or "",
-            "tags": " ".join(resource.tags or []),
-        },
+        ).bindparams(
+            id=resource.id,
+            name=resource.name,
+            description=resource.description or "",
+            tags=" ".join(resource.tags or []),
+        )
     )
 
 
 async def remove_resource_fts(session: AsyncSession, resource_id: int) -> None:
-    await session.execute(text("DELETE FROM resources_fts WHERE rowid = :id"), {"id": resource_id})
+    await session.exec(text("DELETE FROM resources_fts WHERE rowid = :id").bindparams(id=resource_id))
 
 
 async def search_resource_ids(session: AsyncSession, query: str) -> Iterable[int]:
-    result = await session.execute(
-        text("SELECT rowid FROM resources_fts WHERE resources_fts MATCH :match"),
-        {"match": query},
+    result = await session.exec(
+        text("SELECT rowid FROM resources_fts WHERE resources_fts MATCH :match").bindparams(match=query)
     )
-    return [row[0] for row in result.fetchall()]
+    return [row for row in result.scalars().all()]

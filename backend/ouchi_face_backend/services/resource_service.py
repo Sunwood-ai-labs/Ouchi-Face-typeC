@@ -50,7 +50,7 @@ class ResourceService:
             query = query.where(Resource.id.in_(ids))
 
         count_result = await self.session.exec(query.with_only_columns(Resource.id))
-        total = len(count_result.all())
+        total = len(count_result.scalars().all())
 
         query = query.order_by(Resource.modified_at.desc())
         if id_order:
@@ -59,20 +59,20 @@ class ResourceService:
 
         query = query.offset(offset).limit(limit)
         result = await self.session.exec(query)
-        resources = result.all()
+        resources = result.scalars().all()
         return resources, total
 
     async def get_resource(self, resource_id: int) -> Resource | None:
         result = await self.session.exec(select(Resource).where(Resource.id == resource_id))
-        return result.one_or_none()
+        return result.scalars().one_or_none()
 
     async def get_by_slug(self, slug: str) -> Resource | None:
         result = await self.session.exec(select(Resource).where(Resource.slug == slug))
-        return result.one_or_none()
+        return result.scalars().one_or_none()
 
     async def get_by_repo(self, repo_url: str) -> Resource | None:
         result = await self.session.exec(select(Resource).where(Resource.repo_url == repo_url))
-        return result.one_or_none()
+        return result.scalars().one_or_none()
 
     async def create_or_update(self, payload: ResourceCreateRequest) -> Resource:
         if isinstance(payload, RepoResourceCreate):
@@ -151,7 +151,7 @@ class ResourceService:
 
     async def _ensure_unique_slug(self, candidate: str) -> str:
         existing_slugs = await self.session.exec(select(Resource.slug))
-        return slugify(candidate, existing_slugs.all())
+        return slugify(candidate, existing_slugs.scalars().all())
 
 
 async def to_read_model(resource: Resource) -> ResourceRead:

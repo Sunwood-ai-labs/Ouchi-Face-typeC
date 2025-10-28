@@ -5,10 +5,12 @@ from datetime import date
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from sqlalchemy import text
 from sqlalchemy.pool import StaticPool
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession, create_async_engine
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from ouchi_face_backend.models.resource import ResourceKind, ResourceSource
 from ouchi_face_backend.schemas.resource import ManualResourceCreate, ResourceMetadata
@@ -16,7 +18,7 @@ from ouchi_face_backend.services.repo_sync import RepoSyncService
 from ouchi_face_backend.services.resource_service import ResourceService
 
 
-@pytest.fixture()
+@pytest_asyncio.fixture()
 async def session(tmp_path: Path) -> AsyncSession:
     engine = create_async_engine(
         "sqlite+aiosqlite://",
@@ -34,11 +36,11 @@ async def session(tmp_path: Path) -> AsyncSession:
                 """
             )
         )
-    async_session = AsyncSession(engine)
+    session_factory = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     try:
-        yield async_session
+        async with session_factory() as async_session:
+            yield async_session
     finally:
-        await async_session.close()
         await engine.dispose()
 
 

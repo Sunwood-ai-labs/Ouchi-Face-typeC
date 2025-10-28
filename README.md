@@ -40,6 +40,17 @@ pnpm dev
 
 Set `NEXT_PUBLIC_API_BASE` to your API origin (default `http://localhost:8000`). For GitHub OAuth also export `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
+### 3. All-in-one with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+* Frontend: http://localhost:3000
+* API: http://localhost:8000 (exposed inside the Compose network as `http://api:8000`)
+
+Data and cloned repos persist in `./data`. Tweak `OUCHI_*` env vars inside `docker-compose.yml` to customize storage paths or CORS origins for your setup.
+
 ---
 
 ## 🧠 Core concepts
