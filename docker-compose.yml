@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      OUCHI_DATABASE_URL: sqlite+aiosqlite:///./data/ouchi_face.db
+      OUCHI_ALLOW_ORIGINS: '["http://localhost:3000","http://web:3000"]'
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: http://api:8000
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE: http://api:8000
+      NODE_ENV: production
+    depends_on:
+      - api
+    restart: unless-stopped

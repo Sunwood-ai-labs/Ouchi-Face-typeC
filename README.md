@@ -1,218 +1,117 @@
 <div align="center">
 
-![Image](https://raw.githubusercontent.com/Sunwood-ai-labsII/gemini-actions-lab/refs/heads/main/docs/gemini-actions-labs.png)
+# 🌸 Ouchi Face — Your Home Lab Catalog
 
-
-# Gemini Actions Lab
-
-<a href="./README.md"><img src="https://img.shields.io/badge/English-Readme-blue?style=for-the-badge&logo=github&logoColor=white" alt="English" /></a>
-<a href="./README.ja.md"><img src="https://img.shields.io/badge/日本語-Readme-red?style=for-the-badge&logo=github&logoColor=white" alt="日本語" /></a>
-<img src="https://img.shields.io/badge/GitHub%20Actions-AI-blue?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions" />
-<img src="https://img.shields.io/badge/Gemini-AI-4285F4?style=for-the-badge&logo=google-gemini&logoColor=white" alt="Gemini" />
-[![PyPI](https://img.shields.io/pypi/v/gemini-actions-lab-cli?style=for-the-badge)](https://pypi.org/project/gemini-actions-lab-cli/)
-
-[![💬 Gemini CLI](https://github.com/Sunwood-ai-labsII/gemini-actions-lab/actions/workflows/gemini-cli.yml/badge.svg)](https://github.com/Sunwood-ai-labsII/gemini-actions-lab/actions/workflows/gemini-cli.yml)
-
+Organize self-hosted apps, datasets, and models with style. A FastAPI + Next.js stack for your local Hugging Face. 🏠💾
 
 </div>
 
 ---
 
-## 📖 概要
+## ✨ What’s inside
 
-このリポジトリは、GoogleのGemini AIをGitHub Actionsと統合するための実験室およびショーケースとして機能します。生成AIの力を利用して、さまざまなリポジトリ管理タスクを自動化する方法を示します。
-
-### 🎯 主な機能
-- **AIによる自動化**: Geminiを活用して、Issueのトリアージ、プルリクエストのレビューなどのタスクを処理します。
-- **CLIライクな対話**: Issueのコメントから直接AIアシスタントと対話します。
-- **拡張可能なワークフロー**: 独自のプロジェクトに合わせてワークフローを簡単に適応およびカスタマイズできます。
-
----
-
-## 🤖 ワークフロー概要
-
-![](https://raw.githubusercontent.com/Sunwood-ai-labsII/gemini-actions-lab/refs/heads/main/docs/gal-architecture.png)
-
-このリポジトリには、以下のGitHub Actionsワークフローが含まれています（詳細は [.github/workflows/architecture.md](.github/workflows/architecture.md) を参照）：
-
-- `gemini-cli.yml`: 英語CLI。Issue/PR/コメント/手動でAIコマンドを実行
-- `gemini-jp-cli.yml`: 日本語CLI。Issue/PR/コメント/手動でAIコマンドを実行
-- `gemini-pr-review.yml`: PRレビュー自動化（MCP GitHubサーバー経由でコメント）
-- `gemini-issue-automated-triage.yml`: 新規/更新Issueの自動トリアージ
-- `gemini-issue-scheduled-triage.yml`: 定期スキャンで未トリアージIssueを一括処理
-- `imagen4-issue-trigger-and-commit.yml`: イシュー由来の画像生成→コミット
-- `imagen4-generate-and-commit.yml`: 手動/ディスパッチで画像生成→コミット
-- `gemini-release-notes.yml`: リリース画像生成とリリースノートの自動作成
-- `static-site.yml`: リポジトリ内容をGitHub Pagesに公開
-- `sync-to-report-gh.yml`: 旧テンプレ（現状は参考用）
-
-ワークフローの構成・相互関係・実装詳細は、[.github/workflows/architecture.md](.github/workflows/architecture.md) に集約しています。
+| Layer | Tech | Highlights |
+| --- | --- | --- |
+| Web UI | Next.js 14 (App Router), Tailwind CSS, NextAuth | browse/search cards, manual registration form, OAuth-ready |
+| API | FastAPI + SQLModel + APScheduler | ouchi.yaml ingestion, FTS5 search, HTTP health polling |
+| Storage | SQLite (FTS5) | simple, zero-maintenance |
+| Tooling | Pytest, React Query, GitPython | reproducible sync + tests |
 
 ---
 
-## 🏗️ アーキテクチャ
-アーキテクチャ図やワークフローの詳細な説明は、[.github/workflows/architecture.md](.github/workflows/architecture.md) を参照してください。
+## 🚀 Quick start
 
-### 💬 Discord Issue Bot（任意）
-- Discord から GitHub Issue を作成する最小ボット
-- `discord-issue-bot/.env` にローカルでトークン設定（リポジトリには含めない）
-- 起動例: `docker compose -f docker-compose.yaml up -d --build`
-
-## 📸 スクリーンショットと例
-
-### 🤖 CLIの対話例
-Issueを作成し、`@gemini-cli-jp /help`とコメントして、利用可能なコマンドを確認します:
-
-```
-@gemini-cli-jp /help
-```
-
-AIアシスタントが利用可能なコマンドと使用例を返信します。
-
- 
-
-### 💬 対話の例
-
-**コードレビューのリクエスト:**
-```
-@gemini-cli-jp /review-pr
-このプルリクエストをレビューし、改善点を提案してください
-```
-
-**Issueのトリアージ:**
-```
-@gemini-cli-jp /triage
-このIssueを分析し、適切なラベルと担当者を提案してください
-```
-
----
-
-## 🚀 インストールとセットアップ
-
-### 前提条件
-- リポジトリ作成権限のあるGitHubアカウント
-- Google AI StudioのGemini APIキー
-- GitHub Actionsの基本的な理解
-
-### クイックスタート
-1. **このリポジトリをフォーク**して、自分のGitHubアカウントにコピーします
-2. リポジトリの設定で**GitHubシークレットを設定**します:
-   - `GEMINI_API_KEY`: あなたのGemini APIキー
-   - `GITHUB_TOKEN`: (自動的に提供されます)
-3. `.github/workflows/`からあなたのリポジトリに**ワークフローファイルをコピー**します
-4. あなたのニーズに合わせて**ワークフローをカスタマイズ**します
-5. Issueを作成し、`@gemini-cli-jp /help`とコメントして**セットアップをテスト**します
-
----
-
-## 🛠️ gemini-actions-lab CLI
-
-リポジトリに付属する `gemini-actions-lab-cli`（エイリアス: `gal`）を使うと、シークレット同期やテンプレートワークフローの取得をコマンド一発で実行できます。
-
-### インストール
-
-PyPI から直接インストールできます。
+### 1. Backend
 
 ```bash
-pip install gemini-actions-lab-cli
+uv sync --group dev  # install deps (or pip install -e .[dev])
+uv run uvicorn ouchi_face_backend.application:app --reload
 ```
 
-ローカル開発でソースを同期したい場合は `uv` によるセットアップもサポートしています。
+*Default env vars live in `.env` (see [`ouchi_face_backend/core/config.py`](backend/ouchi_face_backend/core/config.py)).*
+
+### 2. Frontend
 
 ```bash
-uv sync
+cd frontend
+pnpm install  # or npm/yarn
+pnpm dev
 ```
 
-### シークレットの同期
+Set `NEXT_PUBLIC_API_BASE` to your API origin (default `http://localhost:8000`). For GitHub OAuth also export `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`.
 
-`.secrets.env`（任意のファイルを `--env-file` で指定可能）に定義した値を、リポジトリシークレットへ一括で作成・更新します。
+### 3. All-in-one with Docker Compose
 
 ```bash
-gal sync-secrets --repo <owner>/<repo> --env-file path/to/.secrets.env
+docker compose up --build
 ```
 
-- コマンド実行ディレクトリの `.env` ファイルは自動的に読み込まれ、`GITHUB_TOKEN` など CLI 実行に必要な環境変数を設定できます。
-- リポジトリへ同期したい secrets は `.secrets.env` に分離してください（任意のファイルを `--env-file` で指定可）。
-- `GITHUB_TOKEN` 環境変数、または `--token` オプションで GitHub の個人アクセストークンを指定してください。
+* Frontend: http://localhost:3000
+* API: http://localhost:8000 (exposed inside the Compose network as `http://api:8000`)
 
-### AIエージェントガイドラインの同期
-
-`.github/ai-guidelines` ディレクトリに格納されているAIエージェントガイドラインをリポジトリに同期できます。
-
-```bash
-# デフォルトブランチに同期
-uv run gal sync-agent --repo Sunwood-ai-labs/my-repo
-
-# 特定のブランチに同期
-uv run gal sync-agent --repo Sunwood-ai-labs/my-repo --branch develop
-
-# カスタムメッセージで同期
-uv run gal sync-agent --repo Sunwood-ai-labs/my-repo --message "docs: update AI agent guidelines"
-```
-
-### 🚀 クイックスタート
-
-よく使う同期コマンドは下記のとおりです（Pages 連携とトップページのコピー込み）。
-
-```bash
-gal sync-workflows \
-  --repo Sunwood-ai-labs/demo-001 \
-  --destination . \
-  --clean \
-  --enable-pages-actions \
-  --include-index
-```
-
-> `uv run` を利用して開発用に実行する場合は、`uv run gal ...` と置き換えてください。
-
-オプションの詳細やその他のユースケースは `src/README.md` を参照してください。
+Data and cloned repos persist in `./data`. Tweak `OUCHI_*` env vars inside `docker-compose.yml` to customize storage paths or CORS origins for your setup.
 
 ---
 
-## 📁 ディレクトリ構造
+## 🧠 Core concepts
+
+* **Resource ingestion** — register manually or sync a Git repo containing `ouchi.yaml` metadata. Duplicate names auto-slug with collision guards.
+* **Search + filter** — SQLite FTS5 powers fuzzy lookup across name/description/tags with additional kind/tag/owner filters.
+* **Health monitoring** — APScheduler polls every 2 minutes, merging results into resource cards (UP/DOWN/UNKNOWN badges).
+* **Auth ready** — NextAuth GitHub provider stubbed; swap to Forgejo OAuth by updating the provider config.
+
+---
+
+## 🛠️ API sketch
+
+| Method | Path | Notes |
+| --- | --- | --- |
+| `POST` | `/api/resources` | manual or repo-backed registration |
+| `GET` | `/api/resources` | list with `q`, `kind`, `tag`, `owner`, pagination |
+| `GET` | `/api/resources/{id}` | resource detail |
+| `GET` | `/api/resources/slug/{slug}` | detail by slug for the web app |
+| `POST` | `/api/resources/{id}/sync` | resync Git metadata (`ouchi.yaml`) |
+| `GET` | `/api/resources/{id}/health` | most recent poll status |
+
+---
+
+## 🧪 Tests
+
+```bash
+uv run pytest
+```
+
+Covers resource creation and FTS search flow using in-memory SQLite + FTS5.
+
+---
+
+## 🧭 Project layout
 
 ```
-.
-├── .github/
-│   └── workflows/
-│       ├── architecture.md
-│       ├── gemini-cli.yml
-│       ├── gemini-jp-cli.yml
-│       ├── gemini-pr-review.yml
-│       ├── gemini-issue-automated-triage.yml
-│       ├── gemini-issue-scheduled-triage.yml
-│       ├── imagen4-issue-trigger-and-commit.yml
-│       ├── imagen4-generate-and-commit.yml
-│       ├── gemini-release-notes.yml
-│       ├── static-site.yml
-│       └── sync-to-report-gh.yml
-├── discord-issue-bot/
-│   ├── Dockerfile
-│   ├── pyproject.toml
-│   ├── docker-compose.yaml
-│   └── bot.py
-├── .gitignore
-├── LICENSE
-└── README.md
+backend/
+  ouchi_face_backend/
+    api/...
+    core/...
+    db/...
+    models/...
+    services/...
+    application.py
+frontend/
+  app/
+  components/
+  lib/
+  package.json
 ```
 
 ---
 
+## 📌 Roadmap hints
 
-
-## 🤖 Discord Issue Bot
-
-Discord から直接 GitHub Issue を作成する最小ボットの詳細なドキュメントは、以下を参照してください。
-
-- ドキュメント: [discord-issue-bot/README.md](discord-issue-bot/README.md)
-
-## 📝 ライセンス
-
-このプロジェクトは、[LICENSE](LICENSE)ファイルの条件に基づいてライセンスされています。
+* Forgejo OAuth + PAT sync endpoint.
+* Dataset preview (DuckDB) + MinIO catalog adapters.
+* Webhook ingestion for repo push events.
+* Star/favorite counters.
 
 ---
 
-© 2025 Sunwood-ai-labsII
-
-
----
+Made with love for homelabbers. Keep it cute, keep it organized! 💖
