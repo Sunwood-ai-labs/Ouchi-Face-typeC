@@ -3,33 +3,38 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gemini-actions-lab-cli"
-version = "0.7.1"
-description = "Command line helpers for Gemini Actions Lab repositories"
+name = "ouchi-face-backend"
+version = "0.1.0"
+description = "Ouchi Face local catalog backend"
 readme = "README.md"
 authors = [
-    { name = "Sunwood AI Labs" },
+    { name = "Ouchi Face Team" },
 ]
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = [
-    "requests>=2.32.3",
-    "PyNaCl>=1.5.0",
-    "pyfiglet>=0.8.post1",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.23",
+    "sqlmodel>=0.0.16",
+    "apscheduler>=3.10",
+    "httpx>=0.27",
+    "python-multipart>=0.0.9",
+    "gitpython>=3.1",
+    "ruamel.yaml>=0.18",
+    "pydantic-settings>=2.3",
 ]
 
 [project.optional-dependencies]
-test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.23",
 ]
 
-[project.scripts]
-"gemini-actions-lab-cli" = "gemini_actions_lab_cli.cli:main"
-"gal" = "gemini_actions_lab_cli.cli:main"
-
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "backend"}
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
